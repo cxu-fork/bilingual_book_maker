@@ -147,33 +147,33 @@ class EPUBBookLoader(BaseBookLoader):
                     except Exception:
                         pass
     
-            def _check_deprecated(obj):
-                pass
-    
-            epub.EpubWriter._write_items = _write_items_patch
-            epub.EpubReader._check_deprecated = _check_deprecated
-    
-            try:
-                self.origin_book = epub.read_epub(self.epub_name)
-            except Exception:
-                # tricky monkey patch for #71 if you don't know why please check the issue and ignore this
-                # when upstream change will TODO fix this
-                def _load_spine(obj):
-                    spine = obj.container.find("{%s}%s" % (epub.NAMESPACES["OPF"], "spine"))
-    
-                    obj.book.spine = [
-                        (t.get("idref"), t.get("linear", "yes")) for t in spine
-                    ]
-                    obj.book.set_direction(spine.get("page-progression-direction", None))
-    
-                epub.EpubReader._load_spine = _load_spine
-                self.origin_book = epub.read_epub(self.epub_name)
-    
-            self.p_to_save = []
-            self.resume = resume
-            self.bin_path = f"{Path(epub_name).parent}/.{Path(epub_name).stem}.temp.bin"
-            if self.resume:
-                self.load_state()
+        def _check_deprecated(obj):
+            pass
+
+        epub.EpubWriter._write_items = _write_items_patch
+        epub.EpubReader._check_deprecated = _check_deprecated
+
+        try:
+            self.origin_book = epub.read_epub(self.epub_name)
+        except Exception:
+            # tricky monkey patch for #71 if you don't know why please check the issue and ignore this
+            # when upstream change will TODO fix this
+            def _load_spine(obj):
+                spine = obj.container.find("{%s}%s" % (epub.NAMESPACES["OPF"], "spine"))
+
+                obj.book.spine = [
+                    (t.get("idref"), t.get("linear", "yes")) for t in spine
+                ]
+                obj.book.set_direction(spine.get("page-progression-direction", None))
+
+            epub.EpubReader._load_spine = _load_spine
+            self.origin_book = epub.read_epub(self.epub_name)
+
+        self.p_to_save = []
+        self.resume = resume
+        self.bin_path = f"{Path(epub_name).parent}/.{Path(epub_name).stem}.temp.bin"
+        if self.resume:
+            self.load_state()
 
     @staticmethod
     def _is_special_text(text):
