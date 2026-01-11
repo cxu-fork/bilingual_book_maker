@@ -220,6 +220,8 @@ class ChatGPTAPI(Base):
         attempt_count = 0
         max_attempts = 30
         t_text = ""
+        fallback_t_text = "本段翻译报错失败"
+        fallback_t_text_timeout = "本段翻译超时失败"
 
         while attempt_count < max_attempts:
             try:
@@ -236,7 +238,7 @@ class ChatGPTAPI(Base):
                 attempt_count += 1
                 if attempt_count == max_attempts:
                     print(f"Get {attempt_count} consecutive exceptions")
-                    raise
+                    return fallback_t_text_timeout # raise
             except Exception as e:
                 sleep_time = 5+5*attempt_count
                 print(str(e), f"will sleep {sleep_time} seconds")
@@ -244,7 +246,7 @@ class ChatGPTAPI(Base):
                 attempt_count += 1
                 if attempt_count == max_attempts:
                     print(f"Get {attempt_count} consecutive exceptions")
-                    return
+                    return fallback_t_text
 
 
         # todo: Determine whether to print according to the cli option
