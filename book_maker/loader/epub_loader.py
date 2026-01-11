@@ -1044,6 +1044,9 @@ class EPUBBookLoader(BaseBookLoader):
             sys.exit(0)
         except Exception:
             traceback.print_exc()
+            print("you can resume it next time")
+            self._save_progress()
+            self._save_temp_book()
             sys.exit(0)
 
     def load_state(self):
