@@ -236,6 +236,17 @@ class EPUBBookLoader(BaseBookLoader):
         if counter is None:
             counter = [0]  # Use list to allow mutation in nested calls
 
+        if toc is None:
+            return toc
+
+        if isinstance(toc, tuple):
+            # A single TOC entry can be (Section, [sub-items]); wrap it.
+            if len(toc) == 2 and isinstance(toc[1], (list, tuple)):
+                toc = [toc]
+        elif not isinstance(toc, (list, tuple)):
+            # Non-standard EPUBs may provide a single Link/Section instead of a list.
+            toc = [toc]
+
         fixed_toc = []
         for item in toc:
             if isinstance(item, tuple):
