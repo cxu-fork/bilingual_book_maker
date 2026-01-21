@@ -226,6 +226,8 @@ class ChatGPTAPI(Base):
         while attempt_count < max_attempts:
             try:
                 t_text = self.get_translation(text)
+                if t_text.strip()=="" and text.strip()!="":
+                    raise Exception("Empty Response")
                 break
             except RateLimitError as e:
                 # todo: better sleep time? why sleep alawys about key_len
