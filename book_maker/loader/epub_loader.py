@@ -168,6 +168,10 @@ class EPUBBookLoader(BaseBookLoader):
 
             epub.EpubReader._load_spine = _load_spine
             self.origin_book = epub.read_epub(self.epub_name)
+        # fix if opf metadata==None
+        for namespace, meta_dict in self.origin_book.metadata.items():
+            for meta_name, meta_list in meta_dict.items():
+                meta_dict[meta_name] = [ item for item in meta_list if item[1] ]
 
         self.p_to_save = []
         self.resume = resume
