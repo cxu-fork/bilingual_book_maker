@@ -216,7 +216,7 @@ class ChatGPTAPI(Base):
         return messages
 
     def create_chat_completion(self, text):
-        messages = self.create_messages(text, self.create_context_messages())
+        messages = text if isinstance(text, list) else self.create_messages(text, self.create_context_messages())
 
         if self._use_structured_outputs:
             completion = self.openai_client.chat.completions.create(
@@ -246,16 +246,17 @@ class ChatGPTAPI(Base):
         retry=retry_if_exception_type((RateLimitError, Exception)),
         reraise=True,
     )
-    def get_translation(self, text):
+    def get_translation(self, text, needprint=True):
         self.rotate_key()
         self.rotate_model()  # rotate all the model to avoid the limit
 
         # Auto-detect if not yet tested
         if self._use_structured_outputs is None:
             self._test_structured_outputs()
-
-        completion = self.create_chat_completion(text)
-
+            
+        messages = self.create_messages(text, self.create_context_messages())
+        completion = self.create_chat_completion(messages)
+        
         # TODO work well or exception finish by length limit
         # Check if content is not None before encoding
         t_text = ""
@@ -310,14 +311,14 @@ class ChatGPTAPI(Base):
             print(re.sub("\n{3,}", "\n\n", text).replace('[/','').replace(r'[\\',''))
 
         attempt_count = 0
-        max_attempts = 30
+        max_attempts = 60
         t_text = ""
         fallback_t_text = "本段翻译报错失败"
         fallback_t_text_timeout = "本段翻译超时失败"
 
         while attempt_count < max_attempts:
             try:
-                t_text = self.get_translation(text)
+                t_text = self.get_translation(text, needprint)
                 if t_text.strip()=="" and text.strip()!="":
                     raise Exception("Empty Response")
                 break
