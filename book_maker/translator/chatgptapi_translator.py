@@ -154,6 +154,7 @@ class ChatGPTAPI(Base):
         # Structured outputs: auto-detected on first translate_list() call
         # None means "not yet tested", will be set to True/False after test
         self._use_structured_outputs = None
+        self._use_structured_outputs = False
         self.model = (
             None  # Will be set by rotate_model() after model_list is initialized
         )
