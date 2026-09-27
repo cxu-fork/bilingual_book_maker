@@ -3,15 +3,15 @@ import os
 from pathlib import Path
 
 from book_maker.translator.chatgptapi_translator import ChatGPTAPI
-from book_maker.translator.claude_translator import Claude
-from book_maker.translator.gemini_translator import Gemini
-from book_maker.translator.qwen_translator import QwenTranslator
+# from book_maker.translator.claude_translator import Claude
+# from book_maker.translator.gemini_translator import Gemini
+# from book_maker.translator.qwen_translator import QwenTranslator
 
 SUPPORTED_API_STYLES = {
     "openai": ChatGPTAPI,
-    "claude": Claude,
-    "gemini": Gemini,
-    "qwen": QwenTranslator,
+    # "claude": Claude,
+    # "gemini": Gemini,
+    # "qwen": QwenTranslator,
 }
 
 GLOBAL_CONFIG_PATH = Path.home() / ".bbm" / "providers.json"
